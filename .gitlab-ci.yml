@@ -1,0 +1,27 @@
+image: docker:latest
+
+variables:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE || true
+
+stages:
+- build
+- test
+
+build:
+  stage: build
+  script:
+    - docker build --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE -f Docker/build/Dockerfile --build-arg CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE
+  after_script:
+    - >
+      if [ $CI_JOB_STATUS != 'success' ]; then
+        docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE
+      fi
+  parallel:
+    matrix:
+      - CMAKE_BUILD_TYPE: [Release, Debug]

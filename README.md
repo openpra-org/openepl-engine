@@ -1,5 +1,5 @@
-# storm-project-starter-cpp
-Starter project for the C++ API of [Storm](https://www.stormchecker.org).
+# OpenErrorPro Engine
+C++ implementation of the DEPM algorithm, built on the C++ [Storm](https://www.stormchecker.org) API.
 
 ## Getting Started
 Before starting, make sure that Storm is installed. If not, see the [documentation](https://www.stormchecker.org/documentation/obtain-storm/build.html) for details on how to install Storm. It is necessary to build Storm from source, i.e. a Homebrew installation will most likely not work.
