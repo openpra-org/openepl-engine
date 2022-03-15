@@ -1,7 +1,3 @@
-*
+cmake-build-debug
+cmake-build*
 
-## Ignore everything but the src and test directories
-!src
-!tests
-!CMakeLists.txt
-!docker-entrypoint.sh
