@@ -1,7 +1,7 @@
 # OpenErrorPro Engine
 C++ implementation of the DEPM algorithm, built on the C++ [Storm](https://www.stormchecker.org) API.
 
-<br/>
+# Build & Development
 
 <details>
 <summary markdown="span"><h2>Build Instructions</h2></summary>
@@ -10,12 +10,12 @@ Execute the following command from the project root directory `openerrorpro-engi
 
 ## Debug
 ```shell
-docker build -t openerror-pro-engine:Debug -f Dockerfile-build --build-arg CMAKE_BUILD_TYPE="Debug" .
+docker build -t openerror-pro-engine:Debug -f Dockerfile --build-arg CMAKE_BUILD_TYPE="Debug" .
 ```
 
 ## Release
 ```shell
-docker build -t openerror-pro-engine:Release -f Dockerfile-build --build-arg CMAKE_BUILD_TYPE="Release" .
+docker build -t openerror-pro-engine:Release -f Dockerfile --build-arg CMAKE_BUILD_TYPE="Release" .
 ```
 
 ### Optional Build Arguments with defaults:
@@ -23,14 +23,14 @@ docker build -t openerror-pro-engine:Release -f Dockerfile-build --build-arg CMA
 ARG MAKEFLAGS=-j$(nproc)
 ARG CMAKE_BUILD_TYPE="Debug" | "Release"
 ARG BUILD_DIR="/build"
-ARG SRC_DIR="/src"
+ARG SRC_DIR="/source"
 ```
 </details>
 
 <details>
 <summary markdown="span"><h2>Development Instructions</h2></summary>
 
-# Clion Docker Toolchain
+## Clion Docker Toolchain
 Developing in Clion using the Docker Toolchain provides a consistent experience. The debugging environment is an 
 ephemeral Docker container.
 

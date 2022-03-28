@@ -11,7 +11,7 @@ RUN apt install -y $STORM_BUILD_DEPENDENCIES
 ARG MAKEFLAGS=-j$(nproc)
 ARG CMAKE_BUILD_TYPE="Debug"
 ARG BUILD_DIR="/build"
-ARG SRC_DIR="/src"
+ARG SRC_DIR="/source"
 
 # Create working directory
 RUN mkdir -p ${BUILD_DIR}
