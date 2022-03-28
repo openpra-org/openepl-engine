@@ -1,13 +1,10 @@
 # Clion Docker Toolchain
 Developing in Clion using the Docker Toolchain provides a consistent experience. The debugging environment is an 
-ephemeral Docker container based on the 
-[Intel OneAPI HPCkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) API and served 
-over the [intel/oneapi-hpckit](https://hub.docker.com/r/intel/oneapi-hpckit) base docker image.
+ephemeral Docker container.
 
 ## Prerequisites
 * Docker
 * CLion
-* Atleast 25GB of free disk space.
 
 ## Instructions
 
@@ -17,8 +14,8 @@ over the [intel/oneapi-hpckit](https://hub.docker.com/r/intel/oneapi-hpckit) bas
     ```shell
     # Set the environment variables
     PROJECT_ROOT_DIR=$(pwd)
-    DEV_IMAGE_TAG=ads-idac-engine-debugger
-    DEV_IMAGE_DOCKERFILE=$PROJECT_ROOT_DIR/Docker/development/
+    DEV_IMAGE_TAG=openerrorpro-engine-debugger
+    DEV_IMAGE_DOCKERFILE=$PROJECT_ROOT_DIR/Dockerfile-dev
     
     # Build the development image
     docker build --build-arg UID=$(id -u) -t $DEV_IMAGE_TAG $DEV_IMAGE_DOCKERFILE
@@ -28,10 +25,9 @@ over the [intel/oneapi-hpckit](https://hub.docker.com/r/intel/oneapi-hpckit) bas
    2. Click `Add toolchain` and select `Docker`.
    3. Click the `screw nut icon` next to the `Docker` field to select a Docker image.
       1. You can also configure a `Docker server` in `Settings / Preferences | Build, Execution, Deployment | Docker` and then select it in the toolchain settings.
-   4. Select the Docker Image `ads-idac-engine-debugger` and wait until the tool detection finishes.
-   5. Set the `C Compiler` to `icc`
-   6. Set the `C++ Compiler` to `icpc`
-   7. Set the `Debugger` to `gdb-oneapi`
+   4. Select the Docker Image `openerrorpro-engine-debugger` and wait until the tool detection finishes.
+   5. Set the `C Compiler` to `gcc`
+   6. Set the `C++ Compiler` to `g++`
    8. Then save the settings.
 
 3. ### [Build, Run, Debug with a Docker Toolchain](https://www.jetbrains.com/help/clion/clion-toolchains-in-docker.html#build-run-debug-docker)
@@ -39,7 +35,7 @@ over the [intel/oneapi-hpckit](https://hub.docker.com/r/intel/oneapi-hpckit) bas
 ---
    **Note: The project folder will mounted to the Docker container and building, running, and debugging will be 
    performed in it. CLion will start the container and shut it down after the command is executed. The project folder 
-   will be mounted into the `/tmp/ads-idac-engine` directory in the container.**
+   will be mounted into the `/tmp/openerrorpro-engine` directory in the container.**
 --- 
 
 ## Troubleshooting

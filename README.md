@@ -1,30 +1,30 @@
 # OpenErrorPro Engine
 C++ implementation of the DEPM algorithm, built on the C++ [Storm](https://www.stormchecker.org) API.
 
-## Getting Started
-Before starting, make sure that Storm is installed. If not, see the [documentation](https://www.stormchecker.org/documentation/obtain-storm/build.html) for details on how to install Storm. It is necessary to build Storm from source, i.e. a Homebrew installation will most likely not work.
+1. TOC
+{:toc}
 
-First, configure and compile the project. Therefore, execute
-```
-mkdir build
-cd build
-cmake ..
-make
-cd ..
+
+# Build Instructions using Docker
+Execute the following command from the project root directory `openerrorpro-engine`:
+
+## Debug
+```shell
+docker build -t openerror-pro-engine:Debug -f Dockerfile-build --build-arg CMAKE_BUILD_TYPE="Debug" .
 ```
 
-Then, run the executable using 
+## Release
+```shell
+docker build -t openerror-pro-engine:Release -f Dockerfile-build --build-arg CMAKE_BUILD_TYPE="Release" .
 ```
-./build/storm-project-starter examples/die.pm examples/die.pctl
-```
-The answer should be no.
 
-Then, run the executable using 
+### Optional Build Arguments with defaults:
+```dockerfile
+ARG MAKEFLAGS=-j$(nproc)
+ARG CMAKE_BUILD_TYPE="Debug" | "Release"
+ARG BUILD_DIR="/build"
+ARG SRC_DIR="/src"
 ```
-./build/storm-project-starter examples/die.pm examples/die2.pctl
-```
-The answer should be yes.
 
-## What is next?
-You are all set to implement your own tools on top of Storm.
-Feel free to contribute your new algorithms to Storm, such that others can enjoy them.
+## Development
+<iframe src="Docker/Dockerfile-dev" frameborder="0" allowfullscreen="true"></iframe>

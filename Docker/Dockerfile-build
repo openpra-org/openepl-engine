@@ -8,8 +8,6 @@ ENV STORM_BUILD_DEPENDENCIES build-essential git cmake libboost-all-dev libcln-d
 
 RUN apt install -y $STORM_BUILD_DEPENDENCIES
 
-#RUN cmake -DSTORM_DEVELOPER=ON -DSTORM_USE_INTELTBB=OFF ..
-
 ARG MAKEFLAGS=-j$(nproc)
 ARG CMAKE_BUILD_TYPE="Debug"
 ARG BUILD_DIR="/build"
