@@ -1,4 +1,5 @@
-FROM debian:stable-slim as baseimage
+# Stage builder
+FROM movesrwth/storm:travis-debug as baseimage
 RUN apt update && apt upgrade -y
 
 # Storm build dependencies
@@ -7,10 +8,12 @@ ENV STORM_BUILD_DEPENDENCIES build-essential git cmake libboost-all-dev libcln-d
 
 RUN apt install -y $STORM_BUILD_DEPENDENCIES
 
+#RUN cmake -DSTORM_DEVELOPER=ON -DSTORM_USE_INTELTBB=OFF ..
+
 ARG MAKEFLAGS=-j$(nproc)
 ARG CMAKE_BUILD_TYPE="Debug"
-ARG BUILD_DIR="/scratch/build"
-ARG SRC_DIR="/scratch"
+ARG BUILD_DIR="/build"
+ARG SRC_DIR="/src"
 
 # Create working directory
 RUN mkdir -p ${BUILD_DIR}

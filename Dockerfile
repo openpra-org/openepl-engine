@@ -8,10 +8,24 @@ ENV STORM_BUILD_DEPENDENCIES build-essential git cmake libboost-all-dev libcln-d
 
 RUN apt install -y $STORM_BUILD_DEPENDENCIES
 
-# Create working directory and copy-over the src
-ENV SOURCE_PATH /errorpro-engine-src
-RUN mkdir -p $SOURCE_PATH/build
-WORKDIR $SOURCE_PATH/build
-COPY . $SOURCE_PATH
+#RUN cmake -DSTORM_DEVELOPER=ON -DSTORM_USE_INTELTBB=OFF ..
 
-RUN cmake -DSTORM_DEVELOPER=ON -DSTORM_USE_INTELTBB=OFF ..
+ARG MAKEFLAGS=-j$(nproc)
+ARG CMAKE_BUILD_TYPE="Debug"
+ARG BUILD_DIR="/build"
+ARG SRC_DIR="/src"
+
+# Create working directory
+RUN mkdir -p ${BUILD_DIR}
+WORKDIR ${BUILD_DIR}
+
+# Copy codebase into docker container
+COPY . ${SRC_DIR}
+
+ENV MAKEFLAGS=${MAKEFLAGS}
+RUN export MAKEFLAGS=${MAKEFLAGS}
+
+RUN cmake -B${BUILD_DIR} -H${SRC_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+                                      -DSTORM_DEVELOPER=ON \
+                                      -DSTORM_USE_INTELTBB=OFF
+RUN make

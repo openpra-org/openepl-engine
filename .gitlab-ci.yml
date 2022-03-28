@@ -15,7 +15,7 @@ stages:
 build:
   stage: build
   script:
-    - docker build --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE -f Docker/build/Dockerfile --build-arg CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE .
+    - docker build --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE --build-arg CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE
   after_script:
     - >
