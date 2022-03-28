@@ -1,4 +1,0 @@
-[submodule "src/storm"]
-	path = src/storm
-	url = https://github.com/moves-rwth/storm.git
-        branch = stable

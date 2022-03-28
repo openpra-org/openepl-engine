@@ -1,5 +1,5 @@
 # Stage builder
-FROM debian:stable-slim as baseimage
+FROM movesrwth/storm:travis-debug as baseimage
 RUN apt update && apt upgrade -y
 
 # Storm build dependencies
@@ -14,4 +14,4 @@ RUN mkdir -p $SOURCE_PATH/build
 WORKDIR $SOURCE_PATH/build
 COPY . $SOURCE_PATH
 
-RUN cmake -DSTORM_DIR=$SOURCE_PATH/src/storm -DSTORM_DEVELOPER=ON -DSTORM_USE_INTELTBB=OFF ..
+RUN cmake -DSTORM_DEVELOPER=ON -DSTORM_USE_INTELTBB=OFF ..
