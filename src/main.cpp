@@ -2,9 +2,7 @@
 #include <storm-parsers/api/storm-parsers.h>
 #include <storm-parsers/parser/PrismParser.h>
 #include <storm/storage/prism/Program.h>
-#include <storm/storage/jani/Property.h>
 #include <storm/modelchecker/results/CheckResult.h>
-#include <storm/modelchecker/results/ExplicitQuantitativeCheckResult.h>
 
 #include <storm/utility/initialize.h>
 

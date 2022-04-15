@@ -1,4 +1,4 @@
-# OpenErrorPro Engine
+# OpenEPL Engine
 C++ implementation of the DEPM algorithm, built on the C++ [Storm](https://www.stormchecker.org) API.
 
 # Build & Development
@@ -6,16 +6,16 @@ C++ implementation of the DEPM algorithm, built on the C++ [Storm](https://www.s
 <details>
 <summary markdown="span"><h2>Build Instructions</h2></summary>
 
-Execute the following command from the project root directory `openerrorpro-engine`:
+Execute the following command from the project root directory `openepl-engine`:
 
 ## Debug
 ```shell
-docker build -t openerror-pro-engine:Debug -f Dockerfile --build-arg CMAKE_BUILD_TYPE="Debug" .
+docker build -t openepl-engine:Debug -f Dockerfile --build-arg CMAKE_BUILD_TYPE="Debug" .
 ```
 
 ## Release
 ```shell
-docker build -t openerror-pro-engine:Release -f Dockerfile --build-arg CMAKE_BUILD_TYPE="Release" .
+docker build -t openeplengine:Release -f Dockerfile --build-arg CMAKE_BUILD_TYPE="Release" .
 ```
 
 ### Optional Build Arguments with defaults:
@@ -46,7 +46,7 @@ ephemeral Docker container.
     ```shell
     # Set the environment variables
     PROJECT_ROOT_DIR=$(pwd)
-    DEV_IMAGE_TAG=openerrorpro-engine-debugger
+    DEV_IMAGE_TAG=openepl-engine-debugger
     DEV_IMAGE_DOCKERFILE=$PROJECT_ROOT_DIR/Dockerfile-dev
     
     # Build the development image
@@ -57,7 +57,7 @@ ephemeral Docker container.
     2. Click `Add toolchain` and select `Docker`.
     3. Click the `screw nut icon` next to the `Docker` field to select a Docker image.
         1. You can also configure a `Docker server` in `Settings / Preferences | Build, Execution, Deployment | Docker` and then select it in the toolchain settings.
-    4. Select the Docker Image `openerrorpro-engine-debugger` and wait until the tool detection finishes.
+    4. Select the Docker Image `openepl-engine-debugger` and wait until the tool detection finishes.
     5. Set the `C Compiler` to `gcc`
     6. Set the `C++ Compiler` to `g++`
     8. Then save the settings.
@@ -67,7 +67,7 @@ ephemeral Docker container.
 ---
 ** <span>Note: The project folder will mounted to the Docker container and building, running, and debugging will be
 performed in it. CLion will start the container and shut it down after the command is executed. The project folder
-will be mounted into the `/tmp/openerrorpro-engine` directory in the container. </span>**
+will be mounted into the `/tmp/openepl-engine` directory in the container. </span>**
 --- 
 
 ## Troubleshooting
