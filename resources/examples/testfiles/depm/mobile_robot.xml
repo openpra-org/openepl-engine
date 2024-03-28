@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openepl>
+    <model initial_element="Init">
+        <element name="RegStep">
+            <cfc>cf=RegStep -&gt; 1.0:(cf'=NxtGo);</cfc>
+            <epc>(TargetXY=ok) &amp; (RobotXY=ok) -&gt; 0.9016:(MtrCmd'=ok) + 0.0984:(MtrCmd'=error);</epc>
+            <epc>(TargetXY!=ok) | (RobotXY!=ok) -&gt; 0.7857:(MtrCmd'=ok) + 0.2143:(MtrCmd'=error);</epc>
+        </element>
+        <element name="CalcAngle">
+            <cfc>cf=CalcAngle -&gt; 0.6903:(cf'=CorrStep) + 0.3097:(cf'=RegStep);</cfc>
+            <epc>(TargetXY=ok) &amp; (RobotXY=ok) -&gt; 0.8976:(Angle'=ok) + 0.1024:(Angle'=error);</epc>
+            <epc>(TargetXY!=ok) | (RobotXY!=ok) -&gt; 0.1739:(Angle'=ok) + 0.8261:(Angle'=error);</epc>
+        </element>
+        <element name="Exit_OK"/>
+        <element name="GuiOut">
+            <cfc>(cf=GuiOut)&amp;(RobotXY=ok) -&gt; 1.0:(cf'=CalcAngle);</cfc>
+            <cfc>(cf=GuiOut)&amp;(RobotXY=error) -&gt; 0.0931:(cf'=CalcAngle) + 0.9069:(cf'=Exit_FAIL);</cfc>
+        </element>
+        <element name="RcgPic">
+            <cfc>cf=RcgPic -&gt; 0.8653:(cf'=GuiOut) + 0.1147:(cf'=Exit_OK) + 0.02:(cf'=Init);</cfc>
+            <epc>(TargetXY=ok) -&gt; 0.9775:(RobotXY'=ok) + 0.0225:(RobotXY'=error);</epc>
+            <epc>(TargetXY!=ok) -&gt; 0.927:(RobotXY'=error) + 0.073:(RobotXY'=ok);</epc>
+        </element>
+        <element name="CorrStep">
+            <cfc>cf=CorrStep -&gt; 1.0:(cf'=NxtGo);</cfc>
+            <epc>(Angle=ok) -&gt; 0.8518:(MtrCmd'=ok) + 0.1482:(MtrCmd'=error);</epc>
+            <epc>(Angle!=ok) -&gt; 0.0506:(MtrCmd'=ok) + 0.9494:(MtrCmd'=error);</epc>
+        </element>
+        <element name="Init">
+            <cfc>cf=Init -&gt; 0.9781:(cf'=RcgPic) + 0.0219:(cf'=Init);</cfc>
+            <epc>(Scene=ok) -&gt; 0.969:(TargetXY'=ok) + 0.031:(TargetXY'=ok);</epc>
+            <epc>(Scene!=ok) -&gt; (TargetXY'=error);</epc>
+        </element>
+        <element name="Exit_FAIL"/>
+        <element name="NxtGo">
+            <cfc>cf=NxtGo -&gt; 1.0:(cf'=RcgPic);</cfc>
+            <epc>(MtrCmd=ok) -&gt; 0.9625:(Scene'=ok) + 0.0375:(Scene'=error);</epc>
+            <epc>(MtrCmd!=ok) -&gt; 0.0093:(Scene'=ok) + 0.9907:(Scene'=error);</epc>
+        </element>
+        <data name="RobotXY"/>
+        <data name="Scene"/>
+        <data name="TargetXY"/>
+        <data name="MtrCmd"/>
+        <data name="Angle"/>
+        <control_flow from="RegStep" to="NxtGo"/>
+        <control_flow from="CalcAngle" to="CorrStep"/>
+        <control_flow from="CalcAngle" to="RegStep"/>
+        <control_flow from="GuiOut" to="CalcAngle"/>
+        <control_flow from="GuiOut" to="Exit_FAIL"/>
+        <control_flow from="RcgPic" to="GuiOut"/>
+        <control_flow from="RcgPic" to="Exit_OK"/>
+        <control_flow from="RcgPic" to="Init"/>
+        <control_flow from="CorrStep" to="NxtGo"/>
+        <control_flow from="Init" to="RcgPic"/>
+        <control_flow from="Init" to="Init"/>
+        <control_flow from="NxtGo" to="RcgPic"/>
+        <data_flow from="RegStep" to="MtrCmd"/>
+        <data_flow from="TargetXY" to="RegStep"/>
+        <data_flow from="RobotXY" to="RegStep"/>
+        <data_flow from="CalcAngle" to="Angle"/>
+        <data_flow from="TargetXY" to="CalcAngle"/>
+        <data_flow from="RobotXY" to="CalcAngle"/>
+        <data_flow from="RobotXY" to="GuiOut"/>
+        <data_flow from="RcgPic" to="RobotXY"/>
+        <data_flow from="TargetXY" to="RcgPic"/>
+        <data_flow from="CorrStep" to="MtrCmd"/>
+        <data_flow from="Angle" to="CorrStep"/>
+        <data_flow from="Init" to="TargetXY"/>
+        <data_flow from="Scene" to="Init"/>
+        <data_flow from="NxtGo" to="Scene"/>
+        <data_flow from="MtrCmd" to="NxtGo"/>
+        <failure name="FailStop">cf=Exit_FAIL</failure>
+        <failure name="Failure">(cf=Exit_OK)&amp;(Scene=error)</failure>
+        <failure name="ErrorState">(Scene=error)|(RobotXY=error)|(TargetXY=error)|(Angle=error)|(MtrCmd=error)</failure>
+    </model>
+</openepl>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openepl>
+    <model initial_element="eA">
+        <element compound="True" name="eA">
+            <cfc>cf=eA -&gt; 0.7:(cf'=eB) + 0.3:(cf'=eC);</cfc>
+        </element>
+        <element name="eC"/>
+        <element compound="True" name="eB"/>
+        <data name="d1"/>
+        <data name="d3"/>
+        <data name="d4"/>
+        <data name="d2"/>
+        <control_flow from="eA" to="eB"/>
+        <control_flow from="eA" to="eC"/>
+        <control_flow from="eC" to="eA"/>
+        <control_flow from="eB" to="eC"/>
+        <data_flow from="eA" to="d1"/>
+        <data_flow from="eA" to="d2"/>
+        <data_flow from="d4" to="eC"/>
+        <data_flow from="d3" to="eC"/>
+        <data_flow from="eB" to="d3"/>
+        <data_flow from="eB" to="d4"/>
+        <data_flow from="d1" to="eB"/>
+        <data_flow from="d2" to="eB"/>
+    </model>
+    <model host="eA" initial_element="A1">
+        <element name="A1">
+            <epc>(true) -&gt; 0.99:(d1'=0) + 0.01:(d1'=1);</epc>
+        </element>
+        <element compound="True" name="A3"/>
+        <element name="A2">
+            <epc>(true) -&gt; 0.98:(d1'=0) + 0.02:(d1'=1);</epc>
+        </element>
+        <data name="d1"/>
+        <data name="d2"/>
+        <control_flow from="A1" to="A2"/>
+        <control_flow from="A2" to="A3"/>
+        <data_flow from="A1" to="d1"/>
+        <data_flow from="A2" to="d2"/>
+    </model>
+    <model host="A3" initial_element="A31">
+        <element name="A33"/>
+        <element name="A32">
+            <epc>(a31=1) -&gt; 1:(a31'=1) &amp; (a32'=1);</epc>
+            <epc>(a31=0) -&gt; 0.97:(a31'=0) &amp; (a32'=0) + 0.03:(a31'=0) &amp; (a32'=1);</epc>
+        </element>
+        <element name="A31"/>
+        <data name="a31"/>
+        <data name="a32"/>
+        <control_flow from="A32" to="A33"/>
+        <control_flow from="A31" to="A32"/>
+        <data_flow from="A32" to="a31"/>
+        <data_flow from="A32" to="a32"/>
+        <data_flow from="a31" to="A32"/>
+    </model>
+    <model host="eB" initial_element="B1">
+        <element name="B1">
+            <cfc>cf=B1 -&gt; 0.6:(cf'=B2) + 0.4:(cf'=B3);</cfc>
+        </element>
+        <element name="B3"/>
+        <element name="B2"/>
+        <data name="d1"/>
+        <data name="d4"/>
+        <data name="d3"/>
+        <data name="b3"/>
+        <data name="b1"/>
+        <data name="b2"/>
+        <data name="d2"/>
+        <control_flow from="B1" to="B2"/>
+        <control_flow from="B1" to="B3"/>
+        <control_flow from="B2" to="B3"/>
+        <data_flow from="B1" to="b1"/>
+        <data_flow from="B1" to="b2"/>
+        <data_flow from="d2" to="B1"/>
+        <data_flow from="B3" to="d4"/>
+        <data_flow from="b3" to="B3"/>
+        <data_flow from="b2" to="B3"/>
+        <data_flow from="B2" to="d3"/>
+        <data_flow from="B2" to="b3"/>
+        <data_flow from="d1" to="B2"/>
+        <data_flow from="b1" to="B2"/>
+    </model>
+</openepl>

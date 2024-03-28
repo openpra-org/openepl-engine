@@ -1,0 +1,20 @@
+/*
+ * OpenEPL - Build-in Options
+ *
+ * This file is parsed by CMake during makefile generation
+ * It contains information such as the base path to the test/example data
+ */
+
+#ifndef OPENEPL_GENERATED_OPENEPLCONFIG_H_
+#define OPENEPL_GENERATED_OPENEPLCONFIG_H_
+
+// The directory of the sources from which OPENEPL was built.
+#define OPENEPL_SOURCE_DIR "@PROJECT_SOURCE_DIR@"
+
+// The directory of the test resources used in the tests (model files, ...).
+#define OPENEPL_TEST_RESOURCES_DIR "@OPENEPL_TEST_RESOURCES_DIR@"
+
+// The directory in which OPENEPL was built.
+#define OPENEPL_BUILD_DIR "@CMAKE_BINARY_DIR@"
+
+#endif // OPENEPL_GENERATED_OPENEPLCONFIG_H_

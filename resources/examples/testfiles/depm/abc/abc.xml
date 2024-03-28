@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openepl>
+    <model initial_element="eA">
+        <element name="eA">
+            <cfc>cf=eA -&gt; 0.7:(cf'=eB) + 0.3:(cf'=eC);</cfc>
+            <epc>(true) -&gt; 0.9:(d1'=ok) &amp; (d3'=ok) + 0.1:(d1'=error) &amp; (d3'=error);</epc>
+        </element>
+        <element name="eC"/>
+        <element name="eB">
+            <epc>(d1=ok) -&gt; (d2'=ok);</epc>
+            <epc>(d1=error) -&gt; 0.9:(d2'=error) + 0.1:(d2'=ok);</epc>
+        </element>
+        <data name="d3"/>
+        <data name="output"/>
+        <data name="d2"/>
+        <data name="d1"/>
+        <control_flow from="eA" to="eB"/>
+        <control_flow from="eA" to="eC"/>
+        <control_flow from="eB" to="eC"/>
+        <data_flow from="eA" to="d1"/>
+        <data_flow from="eA" to="d3"/>
+        <data_flow from="eC" to="output"/>
+        <data_flow from="d2" to="eC"/>
+        <data_flow from="d3" to="eC"/>
+        <data_flow from="eB" to="d2"/>
+        <data_flow from="d1" to="eB"/>
+        <failure name="Failure">output=error</failure>
+    </model>
+</openepl>

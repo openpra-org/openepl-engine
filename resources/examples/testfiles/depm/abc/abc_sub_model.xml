@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openepl>
+    <model initial_element="eA">
+        <element name="B">
+            <epc>(d1=error) -&gt;0.9:(d2'=error) + 0.1:(d2'=ok);</epc>
+            <epc>(d1=ok) -&gt;1:(d2'=ok);</epc>
+        </element>
+        <element name="eA">
+            <cfc>cf=eA -&gt;0.7:(cf'=B) + 0.3:(cf'=eC);</cfc>
+            <epc>(true) -&gt;0.9:(d1'=ok) &amp; (d3'=ok) + 0.1:(d1'=error) &amp; (d3'=error);</epc>
+        </element>
+        <element compound="True" name="eC"/>
+        <data name="d1"/>
+        <data name="d2"/>
+        <data name="d3"/>
+        <data name="output"/>
+        <control_flow from="B" to="eC"/>
+        <control_flow from="eA" to="B"/>
+        <control_flow from="eA" to="eC"/>
+        <control_flow from="eC" to="eA"/>
+        <data_flow from="B" to="d2"/>
+        <data_flow from="d1" to="B"/>
+        <data_flow from="eA" to="d1"/>
+        <data_flow from="eA" to="d3"/>
+        <data_flow from="eC" to="output"/>
+        <data_flow from="d2" to="eC"/>
+        <data_flow from="d3" to="eC"/>
+    </model>
+    <model host="eC" initial_element="C1">
+        <element name="C2"/>
+        <element name="C1">
+            <epc>(d2=error) -&gt;0.9:(local_cd'=error) + 0.1:(local_cd'=ok);</epc>
+            <epc>(d2=ok) -&gt;1:(local_cd'=ok);</epc>
+        </element>
+        <data name="local_cd"/>
+        <data name="d3"/>
+        <data name="output"/>
+        <data name="d2"/>
+        <control_flow from="C1" to="C2"/>
+        <data_flow from="C2" to="output"/>
+        <data_flow from="local_cd" to="C2"/>
+        <data_flow from="d3" to="C2"/>
+        <data_flow from="C1" to="local_cd"/>
+        <data_flow from="d2" to="C1"/>
+    </model>
+</openepl>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeDeletion="false">
+    <option name="confirmBeforeDeletion" value="false" />
+    <serverData>
+      <paths name="Remote Host (9a0fe5c0-e333-4bc3-88c5-35e87f81dcda)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/tmp.zOPzYLrgot" local="$PROJECT_DIR$" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-docker-rel" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-docker" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-system" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-docker" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-node57" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-remote-host" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-node57" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-docker-dev" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-remote-host" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

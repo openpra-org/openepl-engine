@@ -1,53 +1,94 @@
 #include <storm/api/storm.h>
-#include <storm-parsers/api/storm-parsers.h>
-#include <storm-parsers/parser/PrismParser.h>
-#include <storm/storage/prism/Program.h>
-#include <storm/modelchecker/results/CheckResult.h>
-
 #include <storm/utility/initialize.h>
 
-typedef storm::models::sparse::Dtmc<double> Dtmc;
-typedef storm::modelchecker::SparseDtmcPrctlModelChecker<Dtmc> DtmcModelChecker;
+#include <iostream>
 
-bool check(std::string const& path_to_model, std::string const& property_string) {
-    // Assumes that the model is in the prism program language format and parses the program.
-    auto program = storm::parser::PrismParser::parse(path_to_model);
-    // Code snippet assumes a Dtmc
-    assert(program.getModelType() == storm::prism::Program::ModelType::DTMC);
-    // Then parse the properties, passing the program to give context to some potential variables.
-    auto properties = storm::api::parsePropertiesForPrismProgram(property_string, program);
-    // Translate properties into the more low-level formulae.
-    auto formulae = storm::api::extractFormulasFromProperties(properties);
-    
-    // Now translate the prism program into a DTMC in the sparse format.
-    // Use the formulae to add the correct labelling.
-    auto model = storm::api::buildSparseModel<double>(program, formulae)->template as<Dtmc>();
-    
-    // Create a model checker on top of the sparse engine.
-    auto checker = std::make_shared<DtmcModelChecker>(*model);
-    // Create a check task with the formula. Run this task with the model checker.
-    auto result = checker->check(storm::modelchecker::CheckTask<>(*(formulae[0]), true));
-    assert(result->isExplicitQuantitativeCheckResult());
-    // Use that we know that the model checker produces an explicit quantitative result
-    auto quantRes = result->asExplicitQuantitativeCheckResult<double>();
-    // Now compare the result at the first initial state of the model with 0.5.
-    return quantRes[*model->getInitialStates().begin()] > 0.5;
+#include <boost/program_options.hpp>
+#include <regex>
+
+//#include <openepl/utility/JSON.hpp>
+#include "api/quantifier.h"
+#include "utility/Helpers.h"
+
+static const std::set<std::string> validMethods = {
+        "compute_downtime",
+        "compute_MTTF",
+        "compute_N_failures",
+        "compute_P",
+        "compute_P_single",
+        "compute_Property"
+};
+
+static void buildInputArguments(boost::program_options::options_description &generics) {
+    generics.add_options()
+            ("help,h", "= Show this help message")
+            ("model,i", boost::program_options::value<std::string>()->required(), "= Path for input DEPM xml")
+            ("method,m", boost::program_options::value<std::string>()->required()->notifier(
+                    [&](const std::string &value) {
+                        if (!validMethods.count(value)) {
+                            throw boost::program_options::validation_error(
+                                    boost::program_options::validation_error::invalid_option_value, "method", value);
+                        }
+                    }), "= Quantification method to execute")
+            ("target,t", boost::program_options::value<std::string>()->required(), "= Failure term to quantify")
+            ("results,o", boost::program_options::value<std::string>()->default_value("/dev/fd/1"), "= Path for results JSON")
+            ("timestep,s", boost::program_options::value<long double>()->default_value(1.0f), "= Timestep for P(timestep)")
+            ;
 }
 
+static void run(nlohmann::json &resultJSON, boost::program_options::variables_map &map) {
 
-int main (int argc, char *argv[]) {
-    if (argc != 3) {
-        std::cout << "Needs exactly 2 arguments: model file and property" << std::endl;
-        return 1;
+    const auto targetTerm = map["target"].as<std::string>();
+    const auto inputFilePath = map["model"].as<std::string>();
+    const auto methodName = map["method"].as<std::string>();
+    const auto timestep = map["timestep"].as<long double>();
+
+    resultJSON["model_filepath"] = inputFilePath;
+    resultJSON["output"] = nlohmann::json::array();
+    resultJSON["output"][0]["property"]["method"] = methodName;
+    resultJSON["output"][0]["property"]["target"] = targetTerm;
+
+    if(methodName == "compute_MTTF") {
+        resultJSON["output"][0]["result"] = OpenEPL::api::time::mttf(inputFilePath, targetTerm);
     }
 
+    else if(methodName == "compute_P_single") {
+        resultJSON["output"][0]["result"] = OpenEPL::api::probability::steadystate(inputFilePath, targetTerm);
+        resultJSON["output"][0]["property"]["timestep"] = "infinity";
+    }
+
+    else if(methodName == "compute_P") {
+        resultJSON["output"][0]["result"] = OpenEPL::api::probability::at(inputFilePath, targetTerm, timestep);
+        resultJSON["output"][0]["property"]["timestep"] = timestep;
+    }
+
+    else if(methodName == "compute_Property") {
+        resultJSON["output"][0]["result"] = OpenEPL::api::checkProperty(inputFilePath, targetTerm);
+    }
+}
+
+int main (int argc, char *argv[]) {
     // Init loggers
     storm::utility::setUp();
     // Set some settings objects.
-    storm::settings::initializeAll("storm-starter-project", "storm-starter-project");
+    storm::settings::initializeAll("openepl-engine", "openepl-engine");
 
-    // Call function
-    auto result = check(argv[1], argv[2]);
-    // And print result
-    std::cout << "Result > 0.5? " << (result ? "yes" : "no") << std::endl;
+    boost::program_options::options_description options("Parameters");
+    buildInputArguments(options);
+    boost::program_options::variables_map variablesMap = boost::program_options::variables_map();
+    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, options), variablesMap);
+    boost::program_options::notify(variablesMap);
+
+    //if help, print options and exit
+    if (variablesMap.count("help")) {
+        std::cout<<"openepl-engine::\n";
+        std::cout << options << "\n";
+        exit(0);
+    }
+
+    nlohmann::json json;
+    run(json, variablesMap);
+    writeJSON(variablesMap["results"].as<std::string>(), json);
+
+    exit(0);
 }

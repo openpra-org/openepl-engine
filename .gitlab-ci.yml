@@ -7,6 +7,7 @@ variables:
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE || true
+  - docker build --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE --build-arg CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE .
 
 stages:
 - build
@@ -15,13 +16,20 @@ stages:
 build:
   stage: build
   script:
-    - docker build --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE --build-arg CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE
   after_script:
     - >
       if [ $CI_JOB_STATUS != 'success' ]; then
         docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE
       fi
+  parallel:
+    matrix:
+      - CMAKE_BUILD_TYPE: [Release, Debug]
+
+test:
+  stage: test
+  script:
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME-$CMAKE_BUILD_TYPE make check-verbose
   parallel:
     matrix:
       - CMAKE_BUILD_TYPE: [Release, Debug]

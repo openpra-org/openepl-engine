@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openepl>
+    <model initial_element="Sensor">
+        <element name="Sensor" initial="true">
+            <cfc>cf=Sensor -&gt; 1:(cf'=Transmitter);</cfc>
+            <epc>(true) -&gt; 1:(SAMPLE'=ok);</epc>
+        </element>
+        <element name="Transmitter">
+            <cfc>cf=Transmitter -&gt; 1:(cf'=Channel_1);</cfc>
+            <cfc>cf=Transmitter -&gt; 1:(cf'=Channel_2);</cfc>
+            <cfc>cf=Transmitter -&gt; 1:(cf'=Channel_3);</cfc>
+            <epc>(SAMPLE=ok) -&gt; (REPLICA_1'=ok) &amp; (REPLICA_2'=ok) &amp; (REPLICA_3'=ok);</epc>
+            <epc>(SAMPLE!=ok) -&gt; (REPLICA_1'=error) &amp; (REPLICA_2'=error) &amp; (REPLICA_3'=error);</epc>
+        </element>
+        <element name="Channel_1">
+            <cfc>cf=Channel_1 -&gt; 1:(cf'=Receiver);</cfc>
+            <epc>(REPLICA_1=ok) -&gt; (RECEIVED_1'=ok);</epc>
+            <epc>(REPLICA_1!=ok) -&gt; (RECEIVED_1'=error);</epc>
+        </element>
+        <element name="Channel_2">
+            <cfc>cf=Channel_2 -&gt; 1:(cf'=Receiver);</cfc>
+            <epc>(REPLICA_2=ok) -&gt; (RECEIVED_2'=ok);</epc>
+            <epc>(REPLICA_2!=ok) -&gt; (RECEIVED_2'=error);</epc>
+        </element>
+        <element name="Channel_3">
+            <cfc>cf=Channel_3 -&gt; 1:(cf'=Receiver);</cfc>
+            <epc>(REPLICA_3=ok) -&gt; 0.99999:(RECEIVED_3'=ok) + (1-0.99999):(RECEIVED_3'=error);</epc>
+            <epc>(REPLICA_3!=ok) -&gt; 0.99:(RECEIVED_3'=error) + (1-0.99):(RECEIVED_3'=ok);</epc>
+        </element>
+        <element name="Processor">
+            <cfc>cf=Processor -&gt; 1:(cf'=Sensor);</cfc>
+        </element>
+        <element name="Receiver">
+            <cfc>(cf=Receiver) &amp; (CONSENSUS=ok) -&gt; 1:(cf'=Processor);</cfc>
+            <cfc>(cf=Receiver) &amp; (CONSENSUS=error) -&gt; 1:(cf'=Receiver);</cfc>
+            <epc>(RECEIVED_1=ok) &amp; (RECEIVED_2=ok) &amp; (RECEIVED_3=ok) -&gt; (RECEIVED_SAMPLE'=ok) &amp; (CONSENSUS'=ok);</epc>
+            <epc>(RECEIVED_1!=ok) | (RECEIVED_2!=ok) | (RECEIVED_3!=ok) -&gt; (RECEIVED_SAMPLE'=error) &amp; (CONSENSUS'=error);</epc>
+        </element>
+        <data name="SAMPLE"/>
+        <data name="REPLICA_1"/>
+        <data name="REPLICA_2"/>
+        <data name="REPLICA_3"/>
+        <data name="RECEIVED_1"/>
+        <data name="RECEIVED_2"/>
+        <data name="RECEIVED_3"/>
+        <data name="RECEIVED_SAMPLE"/>
+        <data name="CONSENSUS"/>
+        <control_flow from="Sensor" to="Transmitter"/>
+        <control_flow from="Transmitter" to="Channel_1"/>
+        <control_flow from="Transmitter" to="Channel_2"/>
+        <control_flow from="Transmitter" to="Channel_3"/>
+        <control_flow from="Channel_1" to="Receiver"/>
+        <control_flow from="Channel_2" to="Receiver"/>
+        <control_flow from="Channel_3" to="Receiver"/>
+        <control_flow from="Processor" to="Sensor"/>
+        <control_flow from="Receiver" to="Processor"/>
+        <control_flow from="Receiver" to="Receiver"/>
+        <data_flow from="Sensor" to="SAMPLE"/>
+        <data_flow from="Transmitter" to="REPLICA_1"/>
+        <data_flow from="Transmitter" to="REPLICA_2"/>
+        <data_flow from="Transmitter" to="REPLICA_3"/>
+        <data_flow from="SAMPLE" to="Transmitter"/>
+        <data_flow from="Channel_1" to="RECEIVED_1"/>
+        <data_flow from="REPLICA_1" to="Channel_1"/>
+        <data_flow from="Channel_2" to="RECEIVED_2"/>
+        <data_flow from="REPLICA_2" to="Channel_2"/>
+        <data_flow from="Channel_3" to="RECEIVED_3"/>
+        <data_flow from="REPLICA_3" to="Channel_3"/>
+        <data_flow from="RECEIVED_SAMPLE" to="Processor"/>
+        <data_flow from="Receiver" to="RECEIVED_SAMPLE"/>
+        <data_flow from="Receiver" to="CONSENSUS"/>
+        <data_flow from="RECEIVED_1" to="Receiver"/>
+        <data_flow from="RECEIVED_2" to="Receiver"/>
+        <data_flow from="RECEIVED_3" to="Receiver"/>
+        <data_flow from="CONSENSUS" to="Receiver"/>
+        <failure name="TransmissionFault">SAMPLE!=RECEIVED_SAMPLE</failure>
+        <failure name="QuorumLost">CONSENSUS!=ok&amp;RECEIVED_SAMPLE=error</failure>
+    </model>
+</openepl>

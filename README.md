@@ -1,6 +1,19 @@
 # OpenEPL Engine
 C++ implementation of the DEPM algorithm, built on the C++ [Storm](https://www.stormchecker.org) API.
 
+# Running in Windows
+
+## Build
+* Build the source code inside a new docker image.
+    ```bash
+    docker build --target=binary -t openepl-engine:binary .
+    ```
+## Quantification
+* Run the executable with the required input parameters
+    ```bash
+    docker run --rm -it -v $(pwd)/input:/input openepl-engine:binary `-i /input/${INPUT_DEPM_XML} -p "FAILURE" --mttf`
+    ```
+
 # Build & Development
 
 <details>
